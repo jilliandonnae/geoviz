@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+    <style>
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+
+        header {
+            padding: 6px 10%;
+        }
+
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+
+
+.legend {
+	line-height: 18px;
+	color: #333333;
+	font-family: 'Open Sans', Helvetica, sans-serif;
+	padding: 6px 8px;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
+}
+
+.legend i {
+	width: 40px;
+	height: 18px;
+	float: left;
+	margin-right: 8px;
+	opacity: 0.7;
+}
+
+
+.legend p {
+	font-size: 12px;
+	line-height: 18px;
+	margin: 0;
+}
+        
+        
+    </style>
+</head>
+<body>
+    
+        <header>
+        <h1>Plate Tectonic Features</h1>
+        <h2>Areas with volcanic/seismic activity </h2>
+        <h3>Interactive map - zoom in/out, turn on/off layers, and click features for more info! </h3>
+
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map author: Jillian Weitkamp</p>
+        <p>Department of Geography and Urban Studies, Temple University</p>
+        <p>Data acquired from ArcGIS online</p>
+
+    </footer>
+    
+    <!-- Our web map and content will go here -->
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src= "eq.js"></script>
+    <script src= "volcano.js"></script>
+    <script src= "mag8.js"></script>
+    <div id="map" style="width: 1000px; height: 600px">
+    </div>
+    <script>
+        var map = L.map('map', {center: [39.981192, -75.155399], zoom: 3});
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        map.doubleClickZoom.disable();
+        
+        
+//var volcanoLayer = null;
+//var vo = L.geoJson(volcano, {
+//        onEachFeature: function(feature, layer){
+//            layer.bindPopup('Volcano Name: '+feature.properties.Volcano_Na + '<br>'
+//                           +'Volcano Type: '+feature.properties.Primary_Vo);
+//                    },
+//        pointtolayer: function(feature, _latlng) {
+//            return new L.CircleMarker(_latlng, {
+//                radius: 10,
+//                color: "blues",
+//                fillOpacity: 0.85
+//            })
+//        }
+//    }).addTo(map);
+        
+    var volcanos = L.geoJson(volcano, {
+    pointToLayer: function(feature,latlng) {
+        return L.circleMarker(latlng, commonStyles);
+    },
+        onEachFeature: function(feature, layer){
+         layer.bindPopup('Volcano Name: '+feature.properties.Volcano_Na + '<br>'
+                        +'Volcano Type: '+feature.properties.Primary_Vo + '<br>'
+                        +'Region: '+feature.properties.Region + '<br>'
+                        +'Subregion: '+feature.properties.Subregion + '<br>'
+                        +'Tectonic Environment: '+feature.properties.Tectonic_S + '<br>'
+                        +'Major Rock Type: '+feature.properties.Major_Rock + '<br>'
+                        +'Last Eruption: '+feature.properties.Last_Erupt);
+                  },
+        style: function(feature) {
+            return{
+                color: "#8c0601",
+                radius: 8
+            }
+        }
+}).addTo(map);
+        
+                
+        
+    var equake = L.geoJson(eq, {
+    pointToLayer: function(feature,latlng) {
+        return L.circleMarker(latlng, commonStyles);
+    },
+        onEachFeature: function(feature, layer){
+         layer.bindPopup('Earthquake Magnitude: '+feature.properties.Magnitude + '<br>'
+                        +'Earthquake Date: '+feature.properties.Date_);
+                  },
+        style: function(feature) {
+            return{
+                color: "#ffac26",
+                radius: (feature.properties.Magnitude * 1.6)
+            }
+        }
+}).addTo(map);
+        
+        
+        
+     var bigeq = L.geoJson(mag8, {
+    pointToLayer: function(feature,latlng) {
+        return L.circleMarker(latlng, commonStyles);
+    },
+        onEachFeature: function(feature, layer){
+         layer.bindPopup('Earthquake Magnitude: '+feature.properties.mag + '<br>'
+                        +'Earthquake Date: '+feature.properties.time_);
+                  },
+        style: function(feature) {
+            return{
+                color: "#ff6f00",
+                radius: 17
+            }
+        }
+}).addTo(map);
+    
+         
+           var commonStyles = {
+            weight: 1,
+            stroke: 1,
+            fillOpacity: .8
+        }
+             
+        // Add Scale Bar to Map
+L.control.scale({position: 'bottomleft'}).addTo(map);
+        
+        // Create Leaflet Control Object for Legend
+var legend = L.control({position: 'bottomright'});
+
+// Function that runs when legend is added to map
+legend.onAdd = function (map) {
+    // Create Div Element and Populate it with HTML
+    var div = L.DomUtil.create('div', 'legend');            
+    div.innerHTML += '<b></b><br />';
+    div.innerHTML += '<i style="background: #ffac26"></i><p>Earthquakes</p>';
+    div.innerHTML += '<i style="background: #ff6f00"></i><p>Mag 8+ Earthquakes</p>';
+    div.innerHTML += '<i style="background: #8c0601"></i><p>Volcanoes</p>';
+    div.innerHTML += '<hr>';
+    
+    // Return the Legend div containing the HTML content
+    return div;
+};
+
+// Add Legend to Map
+legend.addTo(map);
+        
+        var sourcesLayers = {
+        "earthquakes ": equake,
+        "magnitude 8+ EQ ": bigeq,
+        "volcanoes ": volcanos,
+        }
+
+        L.control.layers(null, sourcesLayers, {
+            collapsed: false
+        }).addTo(map);
+
+
+        
+    </script>
+</body>
+</html>
