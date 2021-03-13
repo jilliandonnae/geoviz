@@ -2,20 +2,20 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Leaflet Map</title>
+    <title>Volcanoes & Earthquakes</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
     <style>
         
         body {
             margin: 0;
             padding: 0;
-            background: whitesmoke;
+            background: grey;
             font-family: Lato, sans-serif;
             color: #0D0000;
         }
 
         header {
-            padding: 6px 10%;
+            padding: 20px 10%;
         }
 
         h1 {
@@ -78,8 +78,7 @@
 <body>
     
         <header>
-        <h1>Plate Tectonic Features</h1>
-        <h2>Areas with Volcanic/Seismic Activity </h2>
+        <h1>Volcanoes & seismic activity around the globe</h1>
         <h3>Interactive map - zoom in/out, turn on/off layers, and click features for more info! </h3>
 
     </header>
@@ -87,8 +86,8 @@
     <div id='map'></div>
 
     <footer>
-        <p>Map author: Jillian Weitkamp</p>
-        <p>Department of Geography and Urban Studies, Temple University</p>
+        <p>Map author: Jillian D. Weitkamp</p>
+        <p>Department of Geography and Urban Studies, Temple University 2019</p>
         <p>Data acquired from ArcGIS online</p>
 
     </footer>
@@ -197,9 +196,9 @@ legend.onAdd = function (map) {
     // Create Div Element and Populate it with HTML
     var div = L.DomUtil.create('div', 'legend');            
     div.innerHTML += '<b></b><br />';
-    div.innerHTML += '<i style="background: #ffac26"></i><p>Earthquakes</p>';
-    div.innerHTML += '<i style="background: #ff6f00"></i><p>Mag 8+ Earthquakes</p>';
     div.innerHTML += '<i style="background: #8c0601"></i><p>Volcanoes</p>';
+    div.innerHTML += '<i style="background: #ffac26"></i><p>Earthquakes (2005)</p>';
+    div.innerHTML += '<i style="background: #ff6f00"></i><p>Mag 8+ Earthquakes (1970-2019)</p>';
     div.innerHTML += '<hr>';
     
     // Return the Legend div containing the HTML content
